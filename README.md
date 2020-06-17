@@ -1,1 +1,1 @@
-# EpsilonHacks
+# EpsilonHacks Hackathon Project
