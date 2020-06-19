@@ -1,0 +1,39 @@
+{% extends "layoutNoSide.html"%}
+{%block content%}
+<div class="card-deck mb-4">
+  <div class="card">
+    <div class="card-body">
+        <h5 class="card-title"># of <a href = "{{url_for('orderList', username = current_user.username)}}">Current Orders</a></h5>
+        <p class="card-text"><h1>{{currentorders}}</h1></p>
+      <p class="card-text"><small class="text-muted">Last updated seconds ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Total Sales</h5>
+        <p class="card-text"><h1>${{totalSales}}</h1></p>
+      <p class="card-text"><small class="text-muted">Last updated seconds ago</small></p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Money Raised for {{organization}}</h5>
+        <p class="card-text"><h1>${{moneyRaise}}</h1></p>
+      <p class="card-text"><small class="text-muted">Last updated seconds ago</small></p>
+    </div>
+  </div>
+</div>
+<div class="card-deck">
+    <iframe src = "{{url_for('loadMap', path=path)}}"  width = 480 height = 400></iframe>
+  <div class="card col-md-6">
+    <div class="card-body">
+        <h5 class="d-inline card-title">Food Purchased the Most:<h1 style = "display:inline;"> {{maxItem}}</h1></h5>
+        <p class="card-text"></p>
+        <p class="d-inline card-text">Purchased <h1 style = "display:inline;">{{maxNum}}</h1> times</p>
+        <p class="d-inline card-text">Consists of <h1 style = "display:inline;">{{percent}}%</h1> of total items purchased</p>
+      <p class="card-text"><small class="text-muted">Last updated seconds ago</small></p>
+    </div>
+  </div>
+</div>
+<iframe src = "{{url_for('loadChart', path=barpath)}}"  width = 500 height = 400></iframe>
+{%endblock content%}
