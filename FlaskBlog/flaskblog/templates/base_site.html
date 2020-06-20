@@ -26,12 +26,12 @@
     {% endblock meta %}
 
   <title>
-    Flask Dashboard Argon - {% block title %}{% endblock %} | AppSeed
+    Bread and Butter {% block title %}{% endblock %}
   </title>
 
   {% block stylesheets %}
     <!-- Favicon -->
-    <link href="{{ url_for('static', filename='assets/img/brand/favicon.png') }}" rel="icon" type="image/png">
+    <link href="{{ url_for('static', filename='assets/img/brand/bread.jpg') }}" rel="icon" type="image/png">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
     <!-- Icons -->
@@ -68,7 +68,12 @@
     <!-- Optional JS -->
     <script src="{{ url_for('static', filename='assets/js/plugins/chart.js/dist/Chart.min.js') }}"></script>
     <script src="{{ url_for('static', filename='assets/js/plugins/chart.js/dist/Chart.extension.js') }}"></script>
-    
+    <script src = "https://js.stripe.com/v3/"></script>
+    <script>
+      {%block stripe%}
+      {%endblock stripe%}
+    </script>
+    <script src = "{{url_for('static', filename = 'assets/js/script-no-ajax.js')}}"></script>
     <!-- Argon JS -->
     <script src="{{ url_for('static', filename='assets/js/argon-dashboard.min.js') }}"></script>
   {% endblock javascripts %}

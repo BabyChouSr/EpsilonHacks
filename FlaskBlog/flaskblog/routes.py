@@ -12,6 +12,7 @@ import folium
 from geopy.geocoders import Nominatim
 from flask_user import roles_required
 import plotly.express as px
+import stripe
 
 @app.route('/')
 @app.route('/home')
@@ -384,6 +385,10 @@ def restaurants():
     users = User.query.filter(User.role == "restaurant")
     return render_template('restaurants.html',users = users)
 
+@app.route('/thanks/<username>')
+def thanks(username):
+    return render_template('Thanks.html',username = username)
+
 @app.route('/orders/<string:username>', methods = ['GET', 'POST'])
 @login_required
 def orders(username):
@@ -394,9 +399,18 @@ def orders(username):
         order = Orders(qty1  = form.qty1.data, qty2  = form.qty2.data, qty3  = form.qty3.data, qty4  = form.qty4.data, qty5  = form.qty5.data, author = menu.author, username = form.username.data, userAddress = form.userAddress.data)
         db.session.add(order)
         db.session.commit()
-        return redirect(url_for('home'))
-    else:
-        return render_template('orderForm.html', form = form, legend = "New Menu", menu = menu)
+    stripe.api_key = app.config['STRIPE_SECRET_KEY']
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price': 'price_1GvzWsKS9hbYnczg16wxd0Lz',
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=url_for('thanks',username = username, _external = True) + '?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url=url_for('home', _external=True),
+    )
+    return render_template('orderForm.html', form = form, legend = "New Menu", menu = menu, checkout_session_id = session['id'],checkout_public_key = app.config['STRIPE_PUBLIC_KEY'])
 
 @app.route('/orderList/<string:username>')
 @login_required

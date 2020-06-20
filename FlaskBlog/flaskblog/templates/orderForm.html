@@ -1,4 +1,8 @@
 {% extends "base_site.html" %}
+{%block stripe%}
+const checkout_public_key = '{{checkout_public_key}}'
+const checkout_session_id = '{{checkout_session_id}}'
+{%endblock stripe%}
 {%block stylesheets%}
 {{super()}}
 <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">

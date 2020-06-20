@@ -36,6 +36,7 @@ def create_restaurants():
         db.session.add(menu)
         db.session.commit()
         print(i)
+        print(user.email)
         i +=1
 #user = User(username = form.username.data, email = form.email.data, password = hashed_password, userAddress = form.userAddress.data, role = "restaurant")
 #menu = Menu(org = form.org.data, percentage = form.percentage.data, item1 = form.item1.data, item2 = form.item2.data,item3 = form.item3.data,item4 = form.item4.data,item5 = form.item5.data, price1 = form.price1.data, price2 = form.price2.data, price3 = form.price3.data, price4 = form.price4.data, price5 = form.price5.data, author = current_user)

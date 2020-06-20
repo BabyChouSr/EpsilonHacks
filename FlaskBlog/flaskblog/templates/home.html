@@ -4,8 +4,8 @@
 {{super()}}
 <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
 {% endblock stylesheets%}
+
 <div class = "container">
-    <h1>Events</h1>
     {% for post in posts.items%}
         <article class="media content-section col-md-8">
             <img class = "rounded-circle article-img" src = "{{ url_for('static', filename = 'profile_pics/' + post.author.image_file) }}">
