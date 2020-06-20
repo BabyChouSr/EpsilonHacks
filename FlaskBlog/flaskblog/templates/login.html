@@ -1,57 +1,74 @@
-{% extends "layout.html" %}
-{%block content%}
-    <div class = 'content-section'>
-        <form method = 'POST' action = '' >
-            {{form.hidden_tag()}}
-            <fieldset class = 'form-group'>
-                <h3>Login</h3>
-                <hr>
-                <div class = "form-group">
-                    {{form.email.label(class = 'form-control-label')}}
-                    {% if form.email.errors %}
-                        {{form.email(class = "form-control form-control-lg is-invalid")}}
-                        <div class = "invalid-feedback">
-                            {%for error in form.email.errors%}
-                            <span>
-                                {{error}}
-                            </span>
-                            {%endfor%}
-                        </div>
-                    {%else%}
-                        {{form.email(class = "form-control form-control-lg")}}
-                    {%endif%}
+{% extends "base_site_auth.html" %}
+{% block title %} Login {% endblock title %}
+
+{% block content %}
+
+    <!-- Page content -->
+    <div class="container mt--8 pb-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+          <div class="card bg-secondary shadow border-0">
+            <div class="card-header bg-transparent pb-5">
+
+              <div class="text-muted text-center mt-2 mb-3">
+
+                {% if msg %}
+                  <span class="text-danger">{{ msg | safe }}</span>
+                {% else %}
+                  Login
+                {% endif %}
+
+              </div>
+
+            </div>
+            <div class="card-body px-lg-5 py-lg-5">
+
+              {% if success %}
+
+                <div class="text-center mt-2 mb-3">
+
+                  <span class="text-success">{{ success | safe }}</span>
+
                 </div>
-                <div class = "form-group">
-                    {{form.password.label(class = 'form-control-label')}}
-                    {% if form.password.errors %}
-                        {{form.password(class = "form-control form-control-lg is-invalid")}}
-                        <div class = "invalid-feedback">
-                            {%for error in form.password.errors%}
-                            <span>
-                                {{error}}
-                            </span>
-                            {%endfor%}
-                        </div>
-                    {%else%}
-                        {{form.password(class = "form-control form-control-lg")}}
-                    {%endif%}
-                </div>
-                <div class = "form-check">
-                    {{form.remember(class = "form-check-input")}}
-                    {{form.remember.label(class = "form-check-label")}}
-                </div>
-                <small class = 'text-muted ml-2'>
-                    <a href = '#'>Forgot Password? </a>
-                </small>
-            </fieldset>
-                <div class = "form-group">
+
+              {% else %}
+                <form role="form" method="post" action="">
+
+                  {{ form.hidden_tag() }}
+                  <div class="form-group mb-3">
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                      </div>
+                      {{ form.email(placeholder="Email",class="form-control") }}
+                    </div>
+                  </div>
+                  <div class="form-group mb-3">
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                      </div>
+                      {{ form.password(placeholder="Password",class="form-control",type="password") }}
+                    </div>
+                  </div>
+
+
+                  <div class="text-center">
                     {{ form.submit(class = 'btn btn-outline-info') }}
-                </div>
-        </form>
+                  </div>
+                </form>
+              {% endif %}
+
+            </div>
+          </div>
+          <div class="row mt-3 text-center">
+            <div class="col-12">
+              <a href="{{ url_for('login') }}" class="text-light"><small>Register</small></a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class = 'border-top pt-3'>
-        <small class = 'text-muted'>
-            Need an Account?  <a class = 'ml-2' href = '{{ url_for("register") }}'>Sign Up Now</a>
-        </small>
-    </div>
-{% endblock content%}
+
+{% endblock content %}
+

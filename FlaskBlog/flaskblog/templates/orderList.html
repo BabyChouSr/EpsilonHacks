@@ -1,6 +1,12 @@
-{% extends "layoutNoSide.html" %}
+{% extends "layout.html" %}
 {%block content%}
+    {%if currentorders < 1%}
+<div class = "container">
+    <h1> There Are Currently No Orders </h1>
+</div>
+    {% else%}
     {% for order in orders%}
+    <div class = "container">
         <article class = "media content-section col-md-10">
           <div class="media-body">
               <div>
@@ -33,5 +39,7 @@
       </div>
     </div>
   </div>
+        </div>
     {%endfor%}
+{%endif%}
 {% endblock content%}

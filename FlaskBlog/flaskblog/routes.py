@@ -70,7 +70,7 @@ def save_picture(form_picture):
     picture_fn = random_hex + f_ext
     picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
 
-    output_size = (125,125)
+    output_size = (250,200)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)
@@ -396,7 +396,8 @@ def orderList(username):
     user = User.query.filter_by(username = username).first_or_404()
     menu = Menu.query.filter_by(author=user).first()
     orders = Orders.query.filter_by(author = user).all()
-    return render_template("orderList.html", orders = orders,menu = menu)
+    currentorders = Orders.query.count()
+    return render_template("orderList.html", orders = orders,menu = menu,currentorders = currentorders)
 
 @app.route("/order/<int:order_id>/delete", methods = ['POST'])
 @login_required
@@ -495,7 +496,13 @@ def dashboard(username):
     bar_fn = "personalChart" + username + ".html"
     bar_path = os.path.join(app.root_path, 'templates\personalCharts', bar_fn)
     fig.write_html(bar_path)
-    return render_template('dashboard.html', currentorders = currentorders,totalSales  = round(totalSales,2), moneyRaise = moneyRaise, organization = organization,maxItem = maxItem, maxNum = maxNum, percent = round(maxNum/totalNums,2)*100,path=path, barpath = bar_fn)
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    if totalNums == 0:
+        return render_template('dashboard.html', currentorders=currentorders, totalSales=round(totalSales, 2),
+                               moneyRaise=moneyRaise, organization=organization, maxItem=maxItem, maxNum=maxNum,
+                               percent= 0, path=path, barpath=bar_fn,
+                               image_file=image_file)
+    return render_template('dashboard.html', currentorders = currentorders,totalSales  = round(totalSales,2), moneyRaise = moneyRaise, organization = organization,maxItem = maxItem, maxNum = maxNum, percent = round(maxNum/totalNums,2)*100,path=path, barpath = bar_fn, image_file = image_file)
 
 @app.route('/loadChart/<path>')
 def loadChart(path):

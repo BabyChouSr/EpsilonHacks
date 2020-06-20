@@ -1,6 +1,10 @@
-{% extends "layoutNoSide.html" %}
+{% extends "base_site.html" %}
+{%block stylesheets%}
+{{super()}}
+<link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
+{% endblock stylesheets%}
 {%block complete%}
-<script async defer src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBp02CU-o7IfG-9b7Nylfz18mq279AFEKE&libraries=places"></script>
+<script src='http://maps.googleapis.com/maps/api/js?v=3&sensor=false&libraries=places&key=AIzaSyBp02CU-o7IfG-9b7Nylfz18mq279AFEKE'></script>
 <script src="{{url_for('static', filename = 'jquery.geocomplete.js')}}"></script>
 {% endblock complete%}
 {%block js%}
@@ -9,13 +13,14 @@ $("#userAddress").geocomplete()
 });
 {% endblock js%}
 {%block content%}
+<div class = "container">
     <div class = 'content-section'>
         <form method = 'POST' action = '' >
             {{form.hidden_tag()}}
             <fieldset class = 'form-group text-center'>
-                <h3> New Order</h3>
+                <h1> New Order</h1>
                 <hr>
-                <h3>{{menu.percentage}}% of this order Supports {{menu.org}}</h3>
+                <h1>{{menu.percentage}}% of this order Supports {{menu.org}}</h1>
                 <div class = "row">
                     <div class = "form-group col-md-6">
                         {{form.username.label(class = "form-control-label font-weight-bold")}}
@@ -50,11 +55,10 @@ $("#userAddress").geocomplete()
                     {%endif%}
                     </div></div>
                 <div class = "row">
-                    <h3 class = "col-md-4 text-left">Item</h3>
-                    <h3 class = "col-md-4 text-left">Price</h3>
-                    <h3 class = "col-md-2 text-left">Quantity</h3>
+                    <h2 class = "col-md-4 text-left">Item</h2>
+                    <h2 class = "col-md-4 text-left">Price</h2>
+                    <h2 class = "col-md-2 text-left">Quantity</h2>
                 </div>
-                <hr>
                 <div class = "row">
                     <h4 class = "col-md-4 text-left">{{menu.item1}}</h4>
                     <h4 class = "col-md-4 text-left">{{menu.price1}}</h4>
@@ -69,7 +73,7 @@ $("#userAddress").geocomplete()
                             {%endfor%}
                         </div>
                     {%else%}
-                        {{form.qty1(class = "form-control form-control-lg")}}
+                        {{form.qty1(class = "form-control form-control")}}
                     <br>
                     {%endif%}
                 </div></div>
@@ -90,7 +94,7 @@ $("#userAddress").geocomplete()
                             {%endfor%}
                         </div>
                     {%else%}
-                        {{form.qty2(class = "form-control form-control-lg")}}
+                        {{form.qty2(class = "form-control form-control")}}
                     <br>
                     {%endif%}
                 </div></div>
@@ -109,7 +113,7 @@ $("#userAddress").geocomplete()
                             {%endfor%}
                         </div>
                     {%else%}
-                        {{form.qty3(class = "form-control form-control-lg")}}
+                        {{form.qty3(class = "form-control form-control")}}
                     <br>
                     {%endif%}
                 </div></div>
@@ -131,7 +135,7 @@ $("#userAddress").geocomplete()
                             {%endfor%}
                         </div>
                     {%else%}
-                        {{form.qty4(class = "form-control form-control-lg")}}
+                        {{form.qty4(class = "form-control form-control")}}
                     <br>
                     {%endif%}
                 </div></div>
@@ -153,7 +157,7 @@ $("#userAddress").geocomplete()
                             {%endfor%}
                         </div>
                     {%else%}
-                        {{form.qty5(class = "form-control form-control-lg")}}
+                        {{form.qty5(class = "form-control form-control")}}
                     {%endif%}
                 </div></div>
             </fieldset>
@@ -162,4 +166,5 @@ $("#userAddress").geocomplete()
                 </div>
         </form>
     </div>
+</div>
 {% endblock content%}
