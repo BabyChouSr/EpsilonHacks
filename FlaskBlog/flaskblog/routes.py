@@ -98,12 +98,16 @@ def makeMap(vers):
         for place in places:
             place_dict = dict()
             location_2 = geolocator.geocode(place.address)
+            if location_2 == None:
+                continue
             place_dict["name"] = place.location_name
             place_dict["lat"] = location_2.latitude
             place_dict["long"] = location_2.longitude
             data.append(place_dict)
         df_data = pd.DataFrame(data)
         for index, row in df_data.iterrows():
+            if row['lat'] == None or row['long'] == None:
+                continue
             if row['name'] == location.address and current_user.role == "user":
                 folium.Marker([row['lat'], row['long']], icon=folium.Icon(color='red', icon="home"),
                               popup="Home").add_to(f_map)
@@ -117,12 +121,16 @@ def makeMap(vers):
         for user in users:
             user_dict = dict()
             location_2 = geolocator.geocode(user.userAddress)
+            if location_2 == None:
+                continue
             user_dict["name"] = user.username
             user_dict["lat"] = location_2.latitude
             user_dict["long"] = location_2.longitude
             data.append(user_dict)
         df_data = pd.DataFrame(data)
         for index, row in df_data.iterrows():
+            if row['lat'] == None or row['long'] == None:
+                continue
             if row['name'] == location.address and current_user.role == "user":
                 folium.Marker([row['lat'], row['long']], icon=folium.Icon(color='red', icon="home"),
                               popup="Home").add_to(f_map)
