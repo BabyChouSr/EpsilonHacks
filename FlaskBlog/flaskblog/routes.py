@@ -13,6 +13,9 @@ from geopy.geocoders import Nominatim
 from flask_user import roles_required
 import plotly.express as px
 import stripe
+import boto3
+from google.cloud import vision
+import io
 
 @app.route('/')
 @app.route('/home')
@@ -394,21 +397,28 @@ def thanks(username):
 def orders(username):
     user = User.query.filter_by(username = username).first_or_404()
     menu = Menu.query.filter_by(author = user).first()
+    totalPrice = 2100
     form = OrderForm()
     if form.validate_on_submit():
         order = Orders(qty1  = form.qty1.data, qty2  = form.qty2.data, qty3  = form.qty3.data, qty4  = form.qty4.data, qty5  = form.qty5.data, author = menu.author, username = form.username.data, userAddress = form.userAddress.data)
         db.session.add(order)
         db.session.commit()
+        totalPrice = form.qty1.data * menu.price1 + form.qty2.data * menu.price2 + form.qty3.data * menu.price3 + form.qty4.data * menu.price4 + form.qty5.data * menu.price5 * 100
     stripe.api_key = app.config['STRIPE_SECRET_KEY']
+    price = stripe.Price.create(
+        unit_amount= totalPrice,
+        currency="usd",
+        product="prod_HVG4aJHQfnM224",
+    )
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=[{
-            'price': 'price_1GvzWsKS9hbYnczg16wxd0Lz',
+            'price': price,
             'quantity': 1,
         }],
         mode='payment',
-        success_url=url_for('thanks',username = username, _external = True) + '?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url=url_for('home', _external=True),
+        success_url= url_for('thanks',username = username, _external = True) + '?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url= url_for('home', _external=True),
     )
     return render_template('orderForm.html', form = form, legend = "New Menu", menu = menu, checkout_session_id = session['id'],checkout_public_key = app.config['STRIPE_PUBLIC_KEY'])
 
@@ -420,7 +430,7 @@ def orderList(username):
     orders = Orders.query.filter_by(author = user).all()
     currentorders = Orders.query.count()
     return render_template("orderList.html", orders = orders,menu = menu,currentorders = currentorders)
-from . import currentres as restuarantRecommender
+
 @app.route("/order/<int:order_id>/delete", methods = ['POST'])
 @login_required
 def delete_order(order_id):
@@ -530,9 +540,98 @@ def dashboard(username):
 def loadChart(path):
     return render_template('/personalCharts/' + path)
 
+@app.route('/receiptAnalyzer')
+def receiptAnalzyer():
+    path = 'C:/Users/HP/Desktop/EpsilonHacks-master/Website/flaskblog/static/'
+    s3 = boto3.client('s3')
+    s3.download_file('breaddyandbuttery1', 'orderimage.png', path + 'orderimage.png')
 
-@app.route('/response', methods=['POST'])
-def response():
-    fname = request.form.get("fname")
-    names, descriptions = restuarantRecommender.runOutput(fname)
-    return render_template("home.html", name="Results for: "+fname, res1=names[0], des1=descriptions[0], res2=names[1], des2=descriptions[1],res3=names[2], des3=descriptions[2])
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(path + 'orderimage.png')
+    picture_fn = random_hex + f_ext
+
+    output_size = (500,500)
+    i = Image.open(path + "orderimage.png")
+    i.thumbnail(output_size)
+    i.save(path + picture_fn)
+
+    f = "C:/Users/HP/Desktop/EpsilonHacks-master/Website/flaskblog/static/orderimage.png"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/HP/Desktop/crafty-sound-269020-513337242ac1.json"
+    image_file = url_for('static', filename=picture_fn)
+    client = vision.ImageAnnotatorClient()
+    with io.open(f, 'rb') as image:
+        content = image.read()
+
+    image = vision.types.Image(content=content)
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+
+    response = client.document_text_detection(image=image)
+
+    x = []
+    for text in texts:
+        x.append(text.description)
+        break
+    y = str(x[0])
+    y = y.replace("\n", ",")
+    y = y.replace("(", ",")
+    y = y.replace(")", "")
+    arr = y.split(",")
+
+    username = ""
+    userAddress = ""
+    qty1 = ""
+    qty2 = ""
+    qty3 = ""
+    qty4 = ""
+    qty5 = ""
+    restaurantName = ""
+    for j in arr:
+        if "Restaurant" in j:
+            restaurantName = j.replace("Restaurant: ", "")
+            restaurantName = restaurantName.strip()
+    user = User.query.filter_by(username=restaurantName).first_or_404()
+    menu = Menu.query.filter_by(author=user).first()
+    for i in range(0,len(arr)):
+        if "Username" in arr[i]:
+            username = arr[i].replace("Username: ", "")
+            username = username.strip()
+            print(username)
+        if "UserAddress" in arr[i]:
+            userAddress = arr[i].replace("UserAddress: ", "")
+            userAddress += ","+ arr[i+1] +"," + arr[i+2] + "," + arr[i+3]
+            userAddress = userAddress.strip()
+            print(userAddress)
+        if menu.item1 in arr[i]:
+            qty1 = arr[i].replace(menu.item1 + " " + str(menu.price1) + " ", "")
+            qty1 = qty1.strip()
+            qty1 = float(qty1)
+            print(qty1)
+        if menu.item2 in arr[i]:
+            qty2 = arr[i].replace(menu.item2 + " " + str(menu.price2) + " ", "")
+            qty2 = qty2.strip()
+            qty2 = float(qty2)
+            print(qty2)
+        if menu.item3 in arr[i]:
+            qty3 = arr[i].replace(menu.item3 + " " + str(menu.price3) + " ", "")
+            qty3 = qty3.strip()
+            qty3 = float(qty3)
+            print(qty3)
+        if menu.item4 in arr[i]:
+            qty4 = arr[i].replace(menu.item4 + " " + str(menu.price4) + " ", "")
+            qty4 = qty4.strip()
+            qty4 = float(qty4)
+            print(qty4)
+        if menu.item5 in arr[i]:
+            qty5 = arr[i].replace(menu.item5 + " " + str(menu.price5) + " ", "")
+            qty5 = qty5.strip()
+            qty5= float(qty5)
+            print(qty5)
+    user = User.query.filter_by(username=restaurantName).first_or_404()
+    menu = Menu.query.filter_by(author=user).first()
+    order = Orders(qty1=qty1, qty2=qty2, qty3=qty3, qty4=qty4,
+                   qty5=qty5, author=menu.author, username=username,
+                   userAddress=userAddress)
+    db.session.add(order)
+    db.session.commit()
+    return render_template('receiptAnalyzer.html', image_file = image_file, words = arr)

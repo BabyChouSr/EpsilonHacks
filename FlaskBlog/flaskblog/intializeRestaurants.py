@@ -28,6 +28,7 @@ def create_restaurants():
             db.session.add(user)
             db.session.commit()
     '''
+
     users = User.query.all()
     i = 0
     for i in range(0,len(usernames)):

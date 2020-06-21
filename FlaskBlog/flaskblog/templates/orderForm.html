@@ -8,6 +8,7 @@ const checkout_session_id = '{{checkout_session_id}}'
 <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
 {% endblock stylesheets%}
 {%block complete%}
+
 <script src='http://maps.googleapis.com/maps/api/js?v=3&sensor=false&libraries=places&key=AIzaSyBp02CU-o7IfG-9b7Nylfz18mq279AFEKE'></script>
 <script src="{{url_for('static', filename = 'jquery.geocomplete.js')}}"></script>
 {% endblock complete%}
@@ -165,7 +166,7 @@ $("#userAddress").geocomplete()
                     {%endif%}
                 </div></div>
             </fieldset>
-                <div class = "form-group">
+            <div class = "form-group">
                     {{ form.submit(class = 'btn btn-outline-info') }}
                 </div>
         </form>
