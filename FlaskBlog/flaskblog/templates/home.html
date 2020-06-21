@@ -2,33 +2,95 @@
 {%block content%}
 {%block stylesheets%}
 {{super()}}
+<meta charset="UTF-8">
+
 <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
 {% endblock stylesheets%}
-
+<style>
+    input[type=text], select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    
+    input[type=submit] {
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    input[type=submit]:hover {
+      background-color: #45a049;
+    }
+    
+ 
+    </style>
 <div class = "container">
-    {% for post in posts.items%}
-        <article class="media content-section col-md-8">
-            <img class = "rounded-circle article-img" src = "{{ url_for('static', filename = 'profile_pics/' + post.author.image_file) }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="{{url_for('user_posts',username = post.author.username)}}">{{ post.author.username }}</a>
-              <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
-            </div>
-            <h2><a class="article-title" href="{{ url_for('post', post_id = post.id)}}">{{ post.title }}</a></h2>
-              <h3><a class = "article-title" href = "#"> Location: {{post.location}} </a></h3>
-            <p class="article-content">{{ post.content }}</p>
-          </div>
-        </article>
-    {%endfor%}
-    {% for page_num in posts.iter_pages()%}
-    {% if page_num%}
-        {%if posts.page == page_num%}
-        <a class = "btn btn-info mb-4" href= "{{url_for('home', page = page_num)}}">{{page_num}}</a>
-        {%else%}
-        <a class = "btn btn-outline-info mb-4" href= "{{url_for('home', page = page_num)}}">{{page_num}}</a>
-        {%endif%}
-    {% else%}
-    {% endif %}
-    {%endfor%}
-    </div>
+  <h2>Restaurant Recommender</h2>    
+  <br/><br/>
+
+
+
+<form method="POST" action="/response">
+    Type of Restaurant You Want To Go To: <input type="text" name="fname" required><br>
+    <input type="submit" value="Submit" onclick="myFunction()">
+   </form>
+   {% if name %}
+
+
+   <div id="myDIV">
+     <br>
+    <h1>{{name}}</h1>
+    <h2>{{res1}}</h2>
+    <h4>{{des1}}</h4>
+    <br/>
+    <h2>{{res2}}</h2>
+    <h4>{{des2}}</h4>
+    <br/>
+    <h2>{{res3}}</h2>
+    <h4>{{des3}}</h4>
+   </div>
+
+
+  {% endif %}
+  </div>
+
+
+  <script>
+      var x = document.getElementById("myDIV");
+      x.style.display = state;
+
+    function myFunction() {
+     state = "block";
+    }
+    var state="none"
+
+    </script>
+
+
+
 {% endblock content%}
+
+
+
+<script>
+
+  function myFuncti2on() {
+    document.getElementById("title").innerHTML = "Results:";
+    document.getElementById("name").innerHTML = "Isabella's";
+    document.getElementById("description").innerHTML = "Kitchen Bars, Nightlife, Beer, 3.5 259 Compass Arizona Grill Wine & Spirits, Italian, Food , Restaurants";
+    document.getElementById("name2").innerHTML = "Compass Arizona Grill";
+    document.getElementById("description2").innerHTML = "Wine & Spirits, Italian, Food , Restaurants Nightlife, American";
+    document.getElementById("name3").innerHTML = "Orange Sky";
+    document.getElementById("description3").innerHTML = "Seafood, Steakhouses, Steak, American, Fancy";
+  }
+  </script>

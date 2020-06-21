@@ -420,7 +420,7 @@ def orderList(username):
     orders = Orders.query.filter_by(author = user).all()
     currentorders = Orders.query.count()
     return render_template("orderList.html", orders = orders,menu = menu,currentorders = currentorders)
-
+from . import currentres as restuarantRecommender
 @app.route("/order/<int:order_id>/delete", methods = ['POST'])
 @login_required
 def delete_order(order_id):
@@ -529,3 +529,10 @@ def dashboard(username):
 @app.route('/loadChart/<path>')
 def loadChart(path):
     return render_template('/personalCharts/' + path)
+
+
+@app.route('/response', methods=['POST'])
+def response():
+    fname = request.form.get("fname")
+    names, descriptions = restuarantRecommender.runOutput(fname)
+    return render_template("home.html", name="Results for: "+fname, res1=names[0], des1=descriptions[0], res2=names[1], des2=descriptions[1],res3=names[2], des3=descriptions[2])
